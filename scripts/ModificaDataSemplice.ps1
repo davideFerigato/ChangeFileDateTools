@@ -42,7 +42,7 @@ else {
     $filesToModify = Get-ChildItem -Path $targetFolder -File |
         Where-Object {
             $_.Name -ne $scriptName -and $_.Name -ne $batName
-        }
+        } # ← graffa chiusa aggiunta qui
 }
 
 # Richiesta della data all'utente
