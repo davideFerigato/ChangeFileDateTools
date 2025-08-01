@@ -17,7 +17,7 @@ if ($choice -eq "S" -or $choice -eq "s") {
     Write-Host "Digita 'stop' per terminare la selezione." -ForegroundColor Yellow
 
     while ($true) {
-        $input = Read-Host "→ Inserisci nome del file (relativo alla cartella dello script)"
+        $input = Read-Host "--> Inserisci nome del file (relativo alla cartella dello script)"
         if ($input.ToLower() -eq "stop") {
             break
         }
@@ -25,9 +25,9 @@ if ($choice -eq "S" -or $choice -eq "s") {
         $filePath = Join-Path $targetFolder $input
         if (Test-Path $filePath -PathType Leaf) {
             $filesToModify += Get-Item $filePath
-            Write-Host "✔ Aggiunto: $filePath" -ForegroundColor Green
+            Write-Host "OK Aggiunto: $filePath" -ForegroundColor Green
         } else {
-            Write-Host "✘ File non trovato: $filePath" -ForegroundColor Red
+            Write-Host "X File non trovato: $filePath" -ForegroundColor Red
         }
     }
 
@@ -42,7 +42,7 @@ else {
     $filesToModify = Get-ChildItem -Path $targetFolder -File |
         Where-Object {
             $_.Name -ne $scriptName -and $_.Name -ne $batName
-        } # ← graffa chiusa aggiunta qui
+        }
 }
 
 # Richiesta della data all'utente
@@ -51,7 +51,8 @@ $dateInput = Read-Host "Inserisci la data da applicare (formato gg/mm/aaaa)"
 # Validazione della data
 try {
     $baseDate = [datetime]::ParseExact($dateInput, 'dd/MM/yyyy', $null)
-} catch {
+}
+catch {
     Write-Host "ERRORE: data non valida. Usa il formato gg/mm/aaaa." -ForegroundColor Red
     pause
     exit
