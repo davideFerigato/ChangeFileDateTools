@@ -93,7 +93,7 @@ while (-not $uscitaTotale) {
             $baseDate = [datetime]::ParseExact($dateInput, 'dd/MM/yyyy', $null)
         }
         catch {
-            Write-Host "ERRORE: data non valida. Riprova o digita 'I' per tornare indietro." -ForegroundColor Red
+            Write-Host "ERRORE: data non valida. Riprova o digita (I)ndietro per tornare indietro [I]." -ForegroundColor Red
         }
     }
 
@@ -111,7 +111,7 @@ while (-not $uscitaTotale) {
             $file.LastWriteTime = $finalDateTime
             $file.LastAccessTime = $finalDateTime
 
-            Write-Host "OK $($file.FullName) → $finalDateTime" -ForegroundColor Green
+            Write-Host "OK $($file.FullName) --> $finalDateTime" -ForegroundColor Green
         }
         catch {
             Write-Host "ERRORE su $($file.FullName): $($_.Exception.Message)" -ForegroundColor Red
