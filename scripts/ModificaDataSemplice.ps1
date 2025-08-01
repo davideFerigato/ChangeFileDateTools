@@ -1,64 +1,5 @@
-# Ricava il percorso della cartella dove si trova questo script
-$targetFolder = Split-Path -Parent $MyInvocation.MyCommand.Path
-$scriptName = $MyInvocation.MyCommand.Name
-$scriptBaseName = [System.IO.Path]::GetFileNameWithoutExtension($scriptName)
-$batName = "$scriptBaseName.bat"
+Add-Type -AssemblyName System.Windows.Forms
 
-# Informazione per l'utente
-Write-Host "Cartella di destinazione rilevata: $targetFolder" -ForegroundColor Cyan
-
-# Scelta della modalità: Tutti (T) o Selezione manuale (S)
-$choice = Read-Host "Vuoi modificare le date di (T)utti i file o (S)elezionare manualmente i file contenuti nella cartella rilevata? [T/S]"
-
-$filesToModify = @()
-
-if ($choice -eq "S" -or $choice -eq "s") {
-    Write-Host "Modalità selezione attiva. Digita il nome di ciascun file (invio dopo ognuno)." -ForegroundColor Yellow
-    Write-Host "Digita 'stop' per terminare la selezione." -ForegroundColor Yellow
-
-    while ($true) {
-        $input = Read-Host "--> Inserisci nome del file (relativo alla cartella dello script)"
-        if ($input.ToLower() -eq "stop") {
-            break
-        }
-
-        $filePath = Join-Path $targetFolder $input
-        if (Test-Path $filePath -PathType Leaf) {
-            $filesToModify += Get-Item $filePath
-            Write-Host "OK Aggiunto: $filePath" -ForegroundColor Green
-        } else {
-            Write-Host "X File non trovato: $filePath" -ForegroundColor Red
-        }
-    }
-
-    if ($filesToModify.Count -eq 0) {
-        Write-Host "Nessun file valido selezionato. Uscita." -ForegroundColor Red
-        pause
-        exit
-    }
-}
-else {
-    # Modalità TUTTI (default)
-    $filesToModify = Get-ChildItem -Path $targetFolder -File |
-        Where-Object {
-            $_.Name -ne $scriptName -and $_.Name -ne $batName
-        }
-}
-
-# Richiesta della data all'utente
-$dateInput = Read-Host "Inserisci la data da applicare (formato gg/mm/aaaa)"
-
-# Validazione della data
-try {
-    $baseDate = [datetime]::ParseExact($dateInput, 'dd/MM/yyyy', $null)
-}
-catch {
-    Write-Host "ERRORE: data non valida. Usa il formato gg/mm/aaaa." -ForegroundColor Red
-    pause
-    exit
-}
-
-# Funzione per generare un orario casuale tra le 08:00 e le 20:00
 function Get-RandomTimeBetween8and20 {
     $hour = Get-Random -Minimum 8 -Maximum 20
     $minute = Get-Random -Minimum 0 -Maximum 59
@@ -66,22 +7,123 @@ function Get-RandomTimeBetween8and20 {
     return New-TimeSpan -Hours $hour -Minutes $minute -Seconds $second
 }
 
-# Modifica dei file selezionati
-$filesToModify | ForEach-Object {
-    try {
-        $randomTime = Get-RandomTimeBetween8and20
-        $finalDateTime = $baseDate + $randomTime
+$uscitaTotale = $false
 
-        # Aggiorna le date del file
-        $_.CreationTime = $finalDateTime
-        $_.LastWriteTime = $finalDateTime
-        $_.LastAccessTime = $finalDateTime
+while (-not $uscitaTotale) {
+    $ritornaAlMenu = $false
+    Clear-Host
+    Write-Host "== Modifica Data File ==" -ForegroundColor Cyan
+    $filesToModify = @()
 
-        Write-Host "OK: $($_.FullName) → $finalDateTime" -ForegroundColor Green
+    $choice = Read-Host "Vuoi modificare le date di (T)utti i file o (S)elezionarli con il cursore? [T/S]"
+
+    if ($choice -eq "S" -or $choice -eq "s") {
+        $dialog = New-Object System.Windows.Forms.OpenFileDialog
+        $dialog.InitialDirectory = [Environment]::CurrentDirectory
+        $dialog.Multiselect = $true
+        $dialog.Title = "Seleziona file"
+        $dialog.Filter = "Tutti i file|*.*"
+
+        $result = $dialog.ShowDialog()
+
+        if ($result -eq [System.Windows.Forms.DialogResult]::OK) {
+            foreach ($filePath in $dialog.FileNames) {
+                if (Test-Path $filePath -PathType Leaf) {
+                    $filesToModify += Get-Item $filePath
+                }
+            }
+
+            if ($filesToModify.Count -eq 0) {
+                Write-Host "Nessun file valido selezionato. Torno al menu principale." -ForegroundColor Red
+                pause
+                continue
+            }
+
+            Write-Host "`nFile selezionati:" -ForegroundColor Cyan
+            $filesToModify | ForEach-Object { Write-Host "$($_.FullName)" }
+        }
+        else {
+            Write-Host "Selezione annullata. Torno al menu principale." -ForegroundColor Yellow
+            pause
+            continue
+        }
+
     }
-    catch {
-        Write-Host "ERRORE su: $($_.FullName) - $($_.Exception.Message)" -ForegroundColor Red
+    elseif ($choice -eq "T" -or $choice -eq "t") {
+        $targetFolder = Split-Path -Parent $MyInvocation.MyCommand.Path
+        $scriptName = $MyInvocation.MyCommand.Name
+        $scriptBaseName = [System.IO.Path]::GetFileNameWithoutExtension($scriptName)
+        $batName = "$scriptBaseName.bat"
+
+        Write-Host "Cartella di destinazione rilevata: $targetFolder" -ForegroundColor Cyan
+
+        $filesToModify = Get-ChildItem -Path $targetFolder -File |
+            Where-Object {
+                $_.Name -ne $scriptName -and $_.Name -ne $batName
+            }
+
+        if ($filesToModify.Count -eq 0) {
+            Write-Host "Nessun file da modificare nella cartella." -ForegroundColor Red
+            pause
+            continue
+        }
+
+        Write-Host "`nFile trovati:" -ForegroundColor Cyan
+        $filesToModify | ForEach-Object { Write-Host "$($_.FullName)" }
+    }
+    else {
+        Write-Host "Scelta non valida. Riprova." -ForegroundColor Red
+        pause
+        continue
+    }
+
+    # Richiesta della data
+    $baseDate = $null
+    while (-not $baseDate) {
+        $dateInput = Read-Host "Inserisci la data (gg/mm/aaaa) oppure (I)ndietro per tornare indietro [I]"
+
+        if ($dateInput.ToLower() -eq "i") {
+            Write-Host "Torno al menu principale..." -ForegroundColor Yellow
+            pause
+            $ritornaAlMenu = $true
+            break
+        }
+
+        try {
+            $baseDate = [datetime]::ParseExact($dateInput, 'dd/MM/yyyy', $null)
+        }
+        catch {
+            Write-Host "ERRORE: data non valida. Riprova o digita 'I' per tornare indietro." -ForegroundColor Red
+        }
+    }
+
+    if ($ritornaAlMenu) {
+        continue  # torna al while esterno (menu T/S)
+    }
+
+    # Applica modifica se la data è valida
+    foreach ($file in $filesToModify) {
+        try {
+            $randomTime = Get-RandomTimeBetween8and20
+            $finalDateTime = $baseDate + $randomTime
+
+            $file.CreationTime = $finalDateTime
+            $file.LastWriteTime = $finalDateTime
+            $file.LastAccessTime = $finalDateTime
+
+            Write-Host "OK $($file.FullName) → $finalDateTime" -ForegroundColor Green
+        }
+        catch {
+            Write-Host "ERRORE su $($file.FullName): $($_.Exception.Message)" -ForegroundColor Red
+        }
+    }
+
+    Write-Host "`nOperazione completata." -ForegroundColor Cyan
+    $repeat = Read-Host "Vuoi modificare altri file? (S/N)"
+    if ($repeat -ne "S" -and $repeat -ne "s") {
+        $uscitaTotale = $true
     }
 }
 
+Write-Host "Uscita dallo script." -ForegroundColor Cyan
 pause
