@@ -1,0 +1,34 @@
+# Script output / temporary files
+*.log
+*.tmp
+*.temp
+
+# PowerShell related
+*.ps1xml
+*.psd1
+*.psm1
+moduleversion.json
+
+# User-specific files
+*.user
+*.userosscache
+*.suo
+*.userprefs
+
+# Visual Studio
+.vs/
+.idea/
+*.swp
+*.swo
+*.*sdf
+*.opendb
+*.VC.db
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
