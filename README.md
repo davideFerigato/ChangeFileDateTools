@@ -21,7 +21,6 @@
 - [Technologies Used](#-technologies-used)
 - [Contributing](#-contributing)
 - [License](#-license)
-- [Author & Contact](#-author--contact)
 
 ---
 
