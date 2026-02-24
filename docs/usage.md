@@ -115,4 +115,4 @@ A: Currently the time is always random between 08:00 and 20:00. Full customisati
 - Double‑check that you entered the date in **dd/MM/yyyy** format.
 - Remember that the script adds a random time; you can check the full timestamp in the file properties (including time).
 
-For further help, please [open an issue](https://github.com/your-username/ChangeFileDateTools/issues) on GitHub.
+For further help, please [open an issue](https://github.com/davideFerigato/ChangeFileDateTools/issues) on GitHub.
