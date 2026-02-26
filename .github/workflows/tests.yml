@@ -1,0 +1,19 @@
+name: Run Tests
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: windows-latest  # Il progetto è per Windows
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Run test script
+      shell: pwsh
+      run: ./tests/Test-ChangeFileDate.ps1
