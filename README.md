@@ -3,7 +3,8 @@
 [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![PowerShell](https://img.shields.io/badge/PowerShell-5.1%2B-blue)](https://github.com/PowerShell/PowerShell)
 [![Windows](https://img.shields.io/badge/Platform-Windows-0078d7.svg)](https://www.microsoft.com/windows)
-[![GitHub release](https://img.shields.io/github/v/release/davideFerigato/ChangeFileDateTools)](https://github.com/davideFerigato/ChangeFileDateTools/releases)[![Tests](https://github.com/davideFerigato/ChangeFileDateTools/actions/workflows/test.yml/badge.svg)](https://github.com/davideFerigato/ChangeFileDateTools/actions/workflows/test.yml)
+[![GitHub release](https://img.shields.io/github/v/release/davideFerigato/ChangeFileDateTools)](https://github.com/davideFerigato/ChangeFileDateTools/releases)
+[![Tests](https://github.com/davideFerigato/ChangeFileDateTools/actions/workflows/test.yml/badge.svg)](https://github.com/davideFerigato/ChangeFileDateTools/actions/workflows/test.yml)
 
 
 **ChangeFileDateTools** is a lightweight set of tools for Windows that allows you to easily and quickly modify the creation, modification, and access dates of files. Ideal for standardizing timestamps in work environments, organizing document archives, or simulating realistic time scenarios.
