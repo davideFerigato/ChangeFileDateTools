@@ -21,8 +21,6 @@
 - [Practical Example](#-practical-example)
 - [Important Notes](#-important-notes)
 - [Technologies Used](#-technologies-used)
-- [Contributing](#-contributing)
-- [License](#-license)
 
 ---
 
